@@ -65,7 +65,7 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.savefig('image/comparision.png')
 
-    # Consider gaussian lowpass filter, trying to estimate D0
+    # Consider gaussian, or butterworth lowpass filter, trying to estimate D0
     # Apply Fourier Transform to both images
     F_blurred = fft2(cropped_blurred_image)
     F_ideal = fft2(ideal_crosshair)
@@ -81,32 +81,32 @@ if __name__ == "__main__":
     # Calculate D0
     h_center, w_center = h//2, w//2
     D0 = 0.0
-    for i in range(h):
-        for j in range(w):
-            dist = (i - h_center)**2 + (j - w_center)**2
-            huv = np.log(H_uv[i, j])
-            # d0 = np.sqrt(np.abs(-dist / huv) / 2)
-            d0 = (np.sqrt(np.abs(-dist / huv))) / 2
-
-            D0 += d0
-
     # for i in range(h):
     #     for j in range(w):
-    #         dist = np.sqrt((i - h_center)**2 + (j - w_center)**2)
-    #         huv = H_uv[i, j]
+    #         dist = (i - h_center)**2 + (j - w_center)**2
+    #         huv = np.log(H_uv[i, j])
+    #         # d0 = np.sqrt(np.abs(-dist / huv) / 2)
+    #         d0 = (np.sqrt(np.abs(-dist / huv))) / 2
 
-    #         d0 = (dist / ((1 / huv) - 1)**(1/2*2.25))
+    #         D0 += d0
 
-    #         D0 += np.abs(d0)
+    for i in range(h):
+        for j in range(w):
+            dist = np.sqrt((i - h_center)**2 + (j - w_center)**2)
+            huv = H_uv[i, j]
+
+            d0 = (dist / ((1 / huv) - 1)**(1/2*2.25))
+
+            D0 += np.abs(d0)
 
     # Taking the mean
-    D0 = (D0 / (h * w)) / 1.4 # For gaussian
-    # D0 = (D0 / (h * w)) * 2.75 # For butterworth
+    # D0 = (D0 / (h * w)) / 1.4 # For gaussian
+    D0 = (D0 / (h * w)) * 2.75 # For butterworth
     print(f"Estimated D0: {D0}")
 
     # Define the estimate gaussian kernel
-    G_shift = gaussianKernel(h, w, D0)
-    # G_shift = butterworthKernel(h, w, D0)
+    # G_shift = gaussianKernel(h, w, D0)
+    G_shift = butterworthKernel(h, w, D0)
 
     # Regularized deblurring (Wiener filter approach)
     K = 0.0001 # Regularization parameter
@@ -129,21 +129,16 @@ if __name__ == "__main__":
     F_original_fft = fft2(blurred_image)
     F_original_fftshift = fftshift(F_original_fft)
 
-    G_full_shift = gaussianKernel(u, v, D0)
-    # G_full_shift = butterworthKernel(u, v, D0)
-
-    # restore = F_original_fftshift * (1 - G_full_shift + epsilon)
+    # G_full_shift = gaussianKernel(u, v, D0)
+    G_full_shift = butterworthKernel(u, v, D0)
 
     # Regularized deblurring (Wiener filter approach)
     K = 0.005 # Regularization parameter
     H_uv_abs2 = np.abs(G_full_shift)**2
     restore = (F_original_fftshift * G_full_shift.conj()) / (H_uv_abs2 + K)
 
-    # restore = F_original_fftshift * (1 - (G_full_shift + epsilon)) * (np.abs(G_full_shift)**2 / (np.abs(G_full_shift)**2 + 0.00))
-
     f_restore = np.abs(ifft2(ifftshift(restore)))
 
-    # f_restore = inverseLowpass(blurred_image, gaussianKernel, D0)
     f_restore = cv2.normalize(f_restore, None, 0, 255, cv2.NORM_MINMAX)
     f_restore = np.uint8(f_restore)  # Convert to uint8 for displaying
 
@@ -162,12 +157,13 @@ if __name__ == "__main__":
     plt.axis('off')
 
     plt.tight_layout()
-    plt.savefig('image/result.png')
-    # plt.savefig('image/result_butterworth.png')
+    # plt.savefig('image/result.png')
+    plt.savefig('image/result_butterworth.png')
 
     # Brightening the image
     f_restore_brightened = np.copy(f_restore)
-    f_restore_brightened[f_restore_brightened > 5] += 25
+    # f_restore_brightened[f_restore_brightened > 5] += 25
+    f_restore_brightened[f_restore_brightened > 5] += 30
 
     # Ensure pixel values do not exceed 255
     f_restore_brightened = np.clip(f_restore_brightened, 0, 255)
@@ -178,6 +174,6 @@ if __name__ == "__main__":
     plt.imshow(f_restore_brightened, cmap='gray')
     plt.axis('off')
 
-    plt.savefig('image/brightened_result.png')
-    # plt.savefig('image/brightened_result_butterworth.png')
+    # plt.savefig('image/brightened_result.png')
+    plt.savefig('image/brightened_result_butterworth.png')
     plt.show()
