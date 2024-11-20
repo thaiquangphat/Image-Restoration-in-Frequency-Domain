@@ -13,6 +13,7 @@ The heart image is given as follow:
     <a href="https://github.com/thaiquangphat/Image-Restoration-in-Frequency-Domain/blob/main/image/heart.jpg" target="_blank">
         <img src="image/heart.jpg" alt="logo" style="width: 350px; height: auto; align: center">
     </a>
+    <p><em>Blurred heart image</em></p>
 </div>
 
 ### Assumptions
