@@ -10,7 +10,9 @@ Further more, try to restore the original image.
 The heart image is given as follow:
 
 <div align="center">
-<img src="image/heart.jpg" alt="logo" style="width: 350px; height: auto; align: center">
+    <a href="https://github.com/thaiquangphat/Image-Restoration-in-Frequency-Domain/blob/main/image/heart.jpg" target="_blank">
+        <img src="image/heart.jpg" alt="logo" style="width: 350px; height: auto; align: center">
+    </a>
 </div>
 
 ### Assumptions
@@ -28,12 +30,17 @@ TODO
 ### Gaussian Estimator
 
 <div align="center">
-  <img src="image/result_gaussian.png" alt="Description" width="450"/>
+  <a href="https://github.com/thaiquangphat/Image-Restoration-in-Frequency-Domain/blob/main/image/result_gaussian.png" target="_blank">
+    <img src="image/result_gaussian.png" alt="Description" width="450"/>
+  </a>
   <p><em>Gaussian lowpass estimated results</em></p>
 </div>
 
+
 ### Butterworth Estimator
 <div align="center">
-  <img src="image/result_butterworth.png" alt="Description" width="450"/>
+    <a href="https://github.com/thaiquangphat/Image-Restoration-in-Frequency-Domain/blob/main/image/result_butterworth.png" target="_blank">
+        <img src="image/result_butterworth.png" alt="Description" width="450"/>
+    </a>
   <p><em>Butterworth lowpass estimated results</em></p>
 </div>
