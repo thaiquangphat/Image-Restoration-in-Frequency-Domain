@@ -9,10 +9,7 @@ Further more, try to restore the original image.
 
 The heart image is given as follow:
 
-<div style="text-align: center;">
-  <img src="image/heart.jpg" alt="Description" width="350"/>
-  <p><em>Blurred heart image</em></p>
-</div>
+<img src="image/heart.jpg" alt="logo" style="width: 350px; height: auto; align: center">
 
 ### Assumptions
 
