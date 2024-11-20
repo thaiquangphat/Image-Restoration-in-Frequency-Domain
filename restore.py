@@ -225,7 +225,7 @@ def restoreWithButterworth(blurred_image, save=False):
     D0 = (D0 / (h * w)) * 2.75 # For butterworth
     # print(f"Estimated D0: {D0}")
 
-    # Define the estimate gaussian kernel
+    # Define the estimate butterworth kernel
     G_shift = butterworthKernel(h, w, D0)
 
     # Regularized deblurring (Wiener filter approach)
