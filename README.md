@@ -9,8 +9,9 @@ Further more, try to restore the original image.
 
 The heart image is given as follow:
 
+<div align="center">
 <img src="image/heart.jpg" alt="logo" style="width: 350px; height: auto; align: center">
-
+</div>
 ### Assumptions
 
 Upon solving this problem, we consider the following assumptions:
