@@ -85,20 +85,20 @@ if __name__ == "__main__":
         for j in range(w):
             dist = (i - h_center)**2 + (j - w_center)**2
             huv = np.log(H_uv[i, j])
+            # d0 = np.sqrt(np.abs(-dist / huv) / 2)
             d0 = (np.sqrt(np.abs(-dist / huv))) / 2
 
             D0 += d0
 
-    # Taking the mean, -2.29 is estimated
-    # D0 = D0 / (h * w) - 2.29
-    D0 = D0 / (h * w) - 2.1
+    # Taking the mean
+    D0 = (D0 / (h * w)) / 1.4
     print(f"Estimated D0: {D0}")
 
     # Define the estimate gaussian kernel
     G_shift = gaussianKernel(h, w, D0)
 
     # Regularized deblurring (Wiener filter approach)
-    K = 1e-2 # Regularization parameter
+    K = 0.0001 # Regularization parameter
     H_uv_abs2 = np.abs(G_shift)**2
     restored_fft = (F_blurred_shifted * G_shift.conj()) / (H_uv_abs2 + K)
 
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     # restore = F_original_fftshift * (1 - G_full_shift + epsilon)
 
     # Regularized deblurring (Wiener filter approach)
-    K = 1e-2 # Regularization parameter
+    K = 0.005 # Regularization parameter
     H_uv_abs2 = np.abs(G_full_shift)**2
     restore = (F_original_fftshift * G_full_shift.conj()) / (H_uv_abs2 + K)
 
