@@ -90,12 +90,23 @@ if __name__ == "__main__":
 
             D0 += d0
 
+    # for i in range(h):
+    #     for j in range(w):
+    #         dist = np.sqrt((i - h_center)**2 + (j - w_center)**2)
+    #         huv = H_uv[i, j]
+
+    #         d0 = (dist / ((1 / huv) - 1)**(1/2*2.25))
+
+    #         D0 += np.abs(d0)
+
     # Taking the mean
-    D0 = (D0 / (h * w)) / 1.4
+    D0 = (D0 / (h * w)) / 1.4 # For gaussian
+    # D0 = (D0 / (h * w)) * 2.75 # For butterworth
     print(f"Estimated D0: {D0}")
 
     # Define the estimate gaussian kernel
     G_shift = gaussianKernel(h, w, D0)
+    # G_shift = butterworthKernel(h, w, D0)
 
     # Regularized deblurring (Wiener filter approach)
     K = 0.0001 # Regularization parameter
@@ -112,13 +123,14 @@ if __name__ == "__main__":
     plt.axis('off')
 
     # Update D0 for entire image
-    D0 = D0 * 12
+    D0 = D0 * 11.5
 
     # Restore the image
     F_original_fft = fft2(blurred_image)
     F_original_fftshift = fftshift(F_original_fft)
 
     G_full_shift = gaussianKernel(u, v, D0)
+    # G_full_shift = butterworthKernel(u, v, D0)
 
     # restore = F_original_fftshift * (1 - G_full_shift + epsilon)
 
@@ -151,6 +163,7 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     plt.savefig('image/result.png')
+    # plt.savefig('image/result_butterworth.png')
 
     # Brightening the image
     f_restore_brightened = np.copy(f_restore)
@@ -166,4 +179,5 @@ if __name__ == "__main__":
     plt.axis('off')
 
     plt.savefig('image/brightened_result.png')
+    # plt.savefig('image/brightened_result_butterworth.png')
     plt.show()
