@@ -46,24 +46,6 @@ def restoreWithGaussian(blurred_image, save=False):
     # Create the ideal synthetic crosshair
     ideal_crosshair = idealCrossHair(cropped_blurred_image, blurred_image)
 
-    # Save the side-by-side comparision image
-    plt.figure(figsize=(8, 6))
-
-    plt.subplot(1, 2, 1)
-    plt.title("Actual Cropped Blurred Crosshair")
-    plt.imshow(cropped_blurred_image, cmap='gray')
-    plt.axis('off')
-
-    plt.subplot(1, 2, 2)
-    plt.title("Ideal Cross Hair")
-    plt.imshow(ideal_crosshair, cmap='gray')
-    plt.axis('off')
-
-    plt.tight_layout()
-
-    if save == True:
-        plt.savefig('image/comparision.png')
-
     # Apply Fourier Transform to both images
     F_blurred = fft2(cropped_blurred_image)
     F_ideal = fft2(ideal_crosshair)
@@ -100,14 +82,8 @@ def restoreWithGaussian(blurred_image, save=False):
     H_uv_abs2 = np.abs(G_shift)**2
     restored_fft = (F_blurred_shifted * G_shift.conj()) / (H_uv_abs2 + K)
 
-    # Inverse FFT to restore the image
+    # Inverse FFT to restore the image cross
     restored_image = np.abs(ifft2(ifftshift(restored_fft)))
-
-    # Display the restored image
-    plt.figure(figsize=(6, 6))
-    plt.title("Restored Cross from Cropped Blurr")
-    plt.imshow(restored_image, cmap='gray')
-    plt.axis('off')
 
     # Update D0 for entire image
     D0 = D0 * 11.55
@@ -128,45 +104,14 @@ def restoreWithGaussian(blurred_image, save=False):
     f_restore = cv2.normalize(f_restore, None, 0, 255, cv2.NORM_MINMAX)
     f_restore = np.uint8(f_restore)  # Convert to uint8 for displaying
 
-    # Display the blurred image
-    # Save the side-by-side comparision image
-    plt.figure(figsize=(8, 6))
-
-    plt.subplot(1, 2, 1)
-    plt.title("Input Blurred Image")
-    plt.imshow(blurred_image, cmap='gray')
-    plt.axis('off')
-
-    plt.subplot(1, 2, 2)
-    plt.title("Restored Image")
-    plt.imshow(f_restore, cmap='gray')
-    plt.axis('off')
-
-    plt.tight_layout()
-
-    if save == True:
-        plt.savefig('image/gaussian/result.png')
-
     # Brightening the image
     f_restore_brightened = np.copy(f_restore)
-    f_restore_brightened[f_restore_brightened > 5] += 25
+    f_restore_brightened[f_restore_brightened > 5] += 30
 
     # Ensure pixel values do not exceed 255
     f_restore_brightened = np.clip(f_restore_brightened, 0, 255)
 
-    # Display the brightened image
-    plt.figure(figsize=(6, 4))
-    plt.title("Brightened Restored Image")
-    plt.imshow(f_restore_brightened, cmap='gray')
-    plt.axis('off')
-
-    if save == True:
-        plt.savefig('image/gaussian/brightened_result.png')
-    
-    # Show plots
-    plt.show()
-
-    return True
+    return f_restore, f_restore_brightened
 
 def restoreWithButterworth(blurred_image, save=False):
     u, v = blurred_image.shape
@@ -177,24 +122,6 @@ def restoreWithButterworth(blurred_image, save=False):
 
     # Create the ideal synthetic crosshair
     ideal_crosshair = idealCrossHair(cropped_blurred_image, blurred_image)
-
-    # Save the side-by-side comparision image
-    plt.figure(figsize=(8, 6))
-
-    plt.subplot(1, 2, 1)
-    plt.title("Actual Cropped Blurred Crosshair")
-    plt.imshow(cropped_blurred_image, cmap='gray')
-    plt.axis('off')
-
-    plt.subplot(1, 2, 2)
-    plt.title("Ideal Cross Hair")
-    plt.imshow(ideal_crosshair, cmap='gray')
-    plt.axis('off')
-
-    plt.tight_layout()
-
-    if save == True:
-        plt.savefig('image/comparision.png')
 
     # Apply Fourier Transform to both images
     F_blurred = fft2(cropped_blurred_image)
@@ -233,14 +160,8 @@ def restoreWithButterworth(blurred_image, save=False):
     H_uv_abs2 = np.abs(G_shift)**2
     restored_fft = (F_blurred_shifted * G_shift.conj()) / (H_uv_abs2 + K)
 
-    # Inverse FFT to restore the image
+    # Inverse FFT to restore the image cross
     restored_image = np.abs(ifft2(ifftshift(restored_fft)))
-
-    # Display the restored image
-    plt.figure(figsize=(6, 6))
-    plt.title("Restored Image from Cropped Blurr")
-    plt.imshow(restored_image, cmap='gray')
-    plt.axis('off')
 
     # Update D0 for entire image
     D0 = D0 * 11.5
@@ -261,25 +182,6 @@ def restoreWithButterworth(blurred_image, save=False):
     f_restore = cv2.normalize(f_restore, None, 0, 255, cv2.NORM_MINMAX)
     f_restore = np.uint8(f_restore)  # Convert to uint8 for displaying
 
-    # Display the blurred image
-    # Save the side-by-side comparision image
-    plt.figure(figsize=(8, 6))
-
-    plt.subplot(1, 2, 1)
-    plt.title("Input Blurred Image")
-    plt.imshow(blurred_image, cmap='gray')
-    plt.axis('off')
-
-    plt.subplot(1, 2, 2)
-    plt.title("Restored Image")
-    plt.imshow(f_restore, cmap='gray')
-    plt.axis('off')
-
-    plt.tight_layout()
-
-    if save == True:
-        plt.savefig('image/butterworth/result.png')
-
     # Brightening the image
     f_restore_brightened = np.copy(f_restore)
     f_restore_brightened[f_restore_brightened > 5] += 25
@@ -287,16 +189,4 @@ def restoreWithButterworth(blurred_image, save=False):
     # Ensure pixel values do not exceed 255
     f_restore_brightened = np.clip(f_restore_brightened, 0, 255)
 
-    # Display the brightened image
-    plt.figure(figsize=(6, 4))
-    plt.title("Brightened Restored Image")
-    plt.imshow(f_restore_brightened, cmap='gray')
-    plt.axis('off')
-
-    if save == True:
-        plt.savefig('image/butterworth/brightened_result.png')
-
-    # Show the image
-    plt.show()
-
-    return True
+    return f_restore, f_restore_brightened
