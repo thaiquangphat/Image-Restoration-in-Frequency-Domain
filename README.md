@@ -3,7 +3,7 @@
 ## Problem Statement
 
 ### Problem
-Given a blurred image of a heart, the task is to recover the degraded function $H(u,v)$. It is known that, the bottom right corner crosshair image before degraded, is 3 pixels wide, 30 pixels long, and had an intensity of 255.
+Given a blurred image of a heart, the task is to recover the degraded function. It is known that, the bottom right corner crosshair image before degraded, is 3 pixels wide, 30 pixels long, and had an intensity of 255.
 
 Further more, try to restore the original image.
 
@@ -47,7 +47,7 @@ TODO
 
 # Use The Project
 
-Feel free to use the code, here are the instructions
+Feel free to use the code, here are the instructions:
 
 Clone the repository
 
