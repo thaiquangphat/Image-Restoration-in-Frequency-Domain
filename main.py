@@ -4,7 +4,7 @@ import argparse
 from restore import restoreWithGaussian, restoreWithButterworth
 import matplotlib.pyplot as plt
 
-def main(save=False):
+def main():
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Image restoration using Gaussian or Butterworth filter.")
     parser.add_argument('-i', '--image', type=str, required=True, help="Path to the blurred input image.")
@@ -62,7 +62,7 @@ def main(save=False):
     plt.tight_layout()
 
     # Save the result
-    if save == True:
+    if args.save == True:
         if args.mode == 1:
             plt.savefig('image/result_gaussian.png')
         elif args.mode == 2:
@@ -71,4 +71,4 @@ def main(save=False):
     plt.show()
 
 if __name__ == "__main__":
-    main(save=True)
+    main()
