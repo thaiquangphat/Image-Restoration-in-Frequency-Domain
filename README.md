@@ -2,6 +2,8 @@
 
 ## Problem Statement
 
+## Problem
+
 ### Assumptions
 
 ## Approach
