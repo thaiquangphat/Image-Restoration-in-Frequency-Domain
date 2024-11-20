@@ -44,3 +44,25 @@ TODO
     </a>
   <p><em>Butterworth lowpass estimated results</em></p>
 </div>
+
+# Use The Project
+
+Feel free to use the code, here are the instructions
+
+Clone the repository
+
+```bash
+git clone https://github.com/thaiquangphat/Image-Restoration-in-Frequency-Domain.git
+```
+
+Change directory to the project
+```bash
+cd Image-Restoration-in-Frequency-Domain
+```
+
+To directly test the project, run
+```bash
+python main.py image/heart.jpg <mode>
+```
+
+Where `mode` indicates the estimator, `mode = 1` for Gaussian estimator, and `mode = 2` for Butterworth filter.
