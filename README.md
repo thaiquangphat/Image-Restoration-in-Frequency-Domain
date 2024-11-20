@@ -25,13 +25,14 @@ TODO
 ## Experimental Results
 
 ### Gaussian estimator
-<div style="text-align: center;">
+
+<div align="center">
   <img src="image/result_gaussian.png" alt="Description" width="450"/>
   <p><em>Gaussian lowpass estimated results</em></p>
 </div>
 
 ### Butterworth estimator
-<div style="text-align: center;">
+<div align="center">
   <img src="image/result_butterworth.png" alt="Description" width="450"/>
   <p><em>Butterworth lowpass estimated results</em></p>
 </div>
