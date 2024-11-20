@@ -31,7 +31,6 @@ def main():
         [ 0, -1,  0]
     ], dtype=np.float32)
     
-    # Preprocess by smoothing the image
     enhanced_image = cv2.filter2D(restored_image, -1, kernel)
     
     # Save the side-by-side comparision image
