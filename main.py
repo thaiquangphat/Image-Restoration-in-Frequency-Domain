@@ -1,0 +1,169 @@
+import numpy as np
+import cv2
+import math
+import matplotlib.pyplot as plt
+from scipy.fft import fft2, ifft2, fftshift, ifftshift
+from filters import gaussianKernel, butterworthKernel
+
+crop_x_start, crop_x_end = 552, 598  # Adjust these coordinates based on the image
+crop_y_start, crop_y_end = 492, 538  # Adjust these coordinates based on the image
+
+# Define the crop crosshair
+def cropCrossHair(blurred_image):
+    # Crop the region to be compared with the restored version
+    cropped_blurred_image = blurred_image[crop_y_start:crop_y_end, crop_x_start:crop_x_end]
+
+    return cropped_blurred_image
+
+# Define the ideal synthetic crosshair
+def idealCrossHair(cropped_blurred_image, blurred_image):
+    # Crop the region to be compared with the restored version
+    cropped_blurred_image = blurred_image[crop_y_start:crop_y_end, crop_x_start:crop_x_end]
+    h, w = cropped_blurred_image.shape
+
+    # Create the synthetic ideal crosshair for comparison
+    ideal_crosshair = np.zeros_like(cropped_blurred_image, dtype=np.uint8)
+    ideal_width, ideal_length = 3, 35  # Crosshair dimensions
+    center_y, center_x = cropped_blurred_image.shape[0] // 2, cropped_blurred_image.shape[1] // 2
+
+    # Create the horizontal line of the crosshair
+    ideal_crosshair[center_y - ideal_width // 2: center_y + ideal_width // 2 + 1,
+                    center_x - ideal_length // 2: center_x + ideal_length // 2 + 1] = 255
+
+    # Create the vertical line of the crosshair
+    ideal_crosshair[center_y - ideal_length // 2: center_y + ideal_length // 2 + 1,
+                    center_x - ideal_width // 2: center_x + ideal_width // 2 + 1] = 255
+    
+    return ideal_crosshair
+    
+if __name__ == "__main__":
+    # Read the input blurred image
+    image_path = "image/heart.jpg"  # Replace with the correct file path
+    blurred_image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    u, v = blurred_image.shape
+
+    # Crop out the cross hair section
+    cropped_blurred_image = cropCrossHair(blurred_image)
+    h, w = cropped_blurred_image.shape
+
+    # Create the ideal synthetic crosshair
+    ideal_crosshair = idealCrossHair(cropped_blurred_image, blurred_image)
+
+    # Save the side-by-side comparision image
+    plt.figure(figsize=(8, 6))
+
+    plt.subplot(1, 2, 1)
+    plt.title("Actual Cropped Blurred Crosshair")
+    plt.imshow(cropped_blurred_image, cmap='gray')
+    plt.axis('off')
+
+    plt.subplot(1, 2, 2)
+    plt.title("Ideal Cross Hair")
+    plt.imshow(ideal_crosshair, cmap='gray')
+    plt.axis('off')
+
+    plt.tight_layout()
+    plt.savefig('image/comparision.png')
+
+    # Consider gaussian lowpass filter, trying to estimate D0
+    # Apply Fourier Transform to both images
+    F_blurred = fft2(cropped_blurred_image)
+    F_ideal = fft2(ideal_crosshair)
+
+    # Shift the zero frequency component to the center
+    F_blurred_shifted = fftshift(F_blurred)
+    F_ideal_shifted = fftshift(F_ideal)
+
+    # Compute the blurring function H(u,v)
+    epsilon = 1e-10
+    H_uv = F_blurred_shifted / (F_ideal_shifted + epsilon)
+
+    # Calculate D0
+    h_center, w_center = h//2, w//2
+    D0 = 0.0
+    for i in range(h):
+        for j in range(w):
+            dist = (i - h_center)**2 + (j - w_center)**2
+            huv = np.log(H_uv[i, j])
+            d0 = (np.sqrt(np.abs(-dist / huv))) / 2
+
+            D0 += d0
+
+    # Taking the mean, -2.29 is estimated
+    # D0 = D0 / (h * w) - 2.29
+    D0 = D0 / (h * w) - 2.1
+    print(f"Estimated D0: {D0}")
+
+    # Define the estimate gaussian kernel
+    G_shift = gaussianKernel(h, w, D0)
+
+    # Regularized deblurring (Wiener filter approach)
+    K = 1e-2 # Regularization parameter
+    H_uv_abs2 = np.abs(G_shift)**2
+    restored_fft = (F_blurred_shifted * G_shift.conj()) / (H_uv_abs2 + K)
+
+    # Inverse FFT to restore the image
+    restored_image = np.abs(ifft2(ifftshift(restored_fft)))
+
+    # Display the restored image
+    plt.figure(figsize=(6, 6))
+    plt.title("Restored Image from Cropped Blurr")
+    plt.imshow(restored_image, cmap='gray')
+    plt.axis('off')
+
+    # Update D0 for entire image
+    D0 = D0 * 12
+
+    # Restore the image
+    F_original_fft = fft2(blurred_image)
+    F_original_fftshift = fftshift(F_original_fft)
+
+    G_full_shift = gaussianKernel(u, v, D0)
+
+    # restore = F_original_fftshift * (1 - G_full_shift + epsilon)
+
+    # Regularized deblurring (Wiener filter approach)
+    K = 1e-2 # Regularization parameter
+    H_uv_abs2 = np.abs(G_full_shift)**2
+    restore = (F_original_fftshift * G_full_shift.conj()) / (H_uv_abs2 + K)
+
+    # restore = F_original_fftshift * (1 - (G_full_shift + epsilon)) * (np.abs(G_full_shift)**2 / (np.abs(G_full_shift)**2 + 0.00))
+
+    f_restore = np.abs(ifft2(ifftshift(restore)))
+
+    # f_restore = inverseLowpass(blurred_image, gaussianKernel, D0)
+    f_restore = cv2.normalize(f_restore, None, 0, 255, cv2.NORM_MINMAX)
+    f_restore = np.uint8(f_restore)  # Convert to uint8 for displaying
+
+    # Display the blurred image
+    # Save the side-by-side comparision image
+    plt.figure(figsize=(8, 6))
+
+    plt.subplot(1, 2, 1)
+    plt.title("Input Blurred Image")
+    plt.imshow(blurred_image, cmap='gray')
+    plt.axis('off')
+
+    plt.subplot(1, 2, 2)
+    plt.title("Restored Image")
+    plt.imshow(f_restore, cmap='gray')
+    plt.axis('off')
+
+    plt.tight_layout()
+    plt.savefig('image/result.png')
+
+    # Brightening the image
+    f_restore_brightened = np.copy(f_restore)
+    f_restore_brightened[f_restore_brightened > 5] += 25
+
+    # Ensure pixel values do not exceed 255
+    f_restore_brightened = np.clip(f_restore_brightened, 0, 255)
+
+    # Display the brightened image
+    plt.figure(figsize=(6, 4))
+    plt.title("Brightened Restored Image")
+    plt.imshow(f_restore_brightened, cmap='gray')
+    plt.axis('off')
+
+    plt.savefig('image/brightened_result.png')
+    plt.show()
