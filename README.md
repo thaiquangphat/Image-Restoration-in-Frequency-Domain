@@ -62,7 +62,9 @@ cd Image-Restoration-in-Frequency-Domain
 
 To directly test the project, run
 ```bash
-python main.py image/heart.jpg <mode>
+python main.py -i image/heart.jpg -m <mode> -s <save>
 ```
-
-Where `mode` indicates the estimator, `mode = 1` for Gaussian estimator, and `mode = 2` for Butterworth filter.
+Arguments:
+- `-i`: the image path.
+- `-m`: indicates the estimator, `mode = 1` for Gaussian estimator, and `mode = 2` for Butterworth filter.
+- `-s`: whether to save the result figue, default = `False`.

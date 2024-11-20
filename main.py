@@ -7,14 +7,15 @@ import matplotlib.pyplot as plt
 def main(save=False):
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Image restoration using Gaussian or Butterworth filter.")
-    parser.add_argument("image_path", type=str, help="Path to the blurred input image.")
-    parser.add_argument("mode", type=int, choices=[1, 2], help="Restoration mode: 1 for Gaussian, 2 for Butterworth.")
+    parser.add_argument('-i', '--image', type=str, required=True, help="Path to the blurred input image.")
+    parser.add_argument("-m", '--mode', type=int, choices=[1, 2], help="Restoration mode: 1 for Gaussian, 2 for Butterworth.")
+    parser.add_argument("-s", '--save', type=bool, default=False, help="Restoration mode: 1 for Gaussian, 2 for Butterworth.")
     args = parser.parse_args()
 
     # Read the input blurred image
-    blurred_image = cv2.imread(args.image_path, cv2.IMREAD_GRAYSCALE)
+    blurred_image = cv2.imread(args.image, cv2.IMREAD_GRAYSCALE)
     if blurred_image is None:
-        print(f"Error: Unable to read image at {args.image_path}")
+        print(f"Error: Unable to read image at {args.image}")
         return
 
     # Perform restoration based on the selected mode
