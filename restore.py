@@ -3,7 +3,7 @@ import cv2
 import math
 import matplotlib.pyplot as plt
 from scipy.fft import fft2, ifft2, fftshift, ifftshift
-from filters import gaussianKernel, butterworthKernel
+from ultis import gaussianKernel, butterworthKernel
 
 crop_x_start, crop_x_end = 552, 598  # Adjust these coordinates based on the image
 crop_y_start, crop_y_end = 492, 538  # Adjust these coordinates based on the image
@@ -36,7 +36,7 @@ def idealCrossHair(cropped_blurred_image, blurred_image):
     
     return ideal_crosshair
 
-def restoreWithGaussian(blurred_image, save=False):
+def restoreWithGaussian(blurred_image):
     u, v = blurred_image.shape
 
     # Crop out the cross hair section
@@ -113,7 +113,7 @@ def restoreWithGaussian(blurred_image, save=False):
 
     return f_restore, f_restore_brightened
 
-def restoreWithButterworth(blurred_image, save=False):
+def restoreWithButterworth(blurred_image):
     u, v = blurred_image.shape
 
     # Crop out the cross hair section
