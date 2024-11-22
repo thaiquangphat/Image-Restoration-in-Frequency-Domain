@@ -65,7 +65,7 @@ def restoreWithGaussian(blurred_image):
         for j in range(w):
             dist = (i - h_center)**2 + (j - w_center)**2
             huv = np.log(H_uv[i, j])
-            # d0 = np.sqrt(np.abs(-dist / huv) / 2)
+            # d0 = np.sqrt(np.abs(-dist / (2*huv)))
             d0 = (np.sqrt(np.abs(-dist / huv))) / 2
 
             D0 += d0
@@ -84,6 +84,21 @@ def restoreWithGaussian(blurred_image):
 
     # Inverse FFT to restore the image cross
     restored_image = np.abs(ifft2(ifftshift(restored_fft)))
+
+    plt.figure(figsize=(8,4))
+
+    plt.subplot(1, 2, 1)
+    plt.title("Ideal Crosshair")
+    plt.imshow(ideal_crosshair, cmap='gray')
+    plt.axis('off')
+
+    plt.subplot(1, 2, 2)
+    plt.title("Restored Cross")
+    plt.imshow(restored_image, cmap='gray')
+    plt.axis('off')
+
+    plt.tight_layout()
+    plt.show()
 
     # Update D0 for entire image
     D0 = D0 * 11.55
@@ -162,6 +177,21 @@ def restoreWithButterworth(blurred_image):
 
     # Inverse FFT to restore the image cross
     restored_image = np.abs(ifft2(ifftshift(restored_fft)))
+
+    plt.figure(figsize=(8,4))
+
+    plt.subplot(1, 2, 1)
+    plt.title("Ideal Crosshair")
+    plt.imshow(ideal_crosshair, cmap='gray')
+    plt.axis('off')
+
+    plt.subplot(1, 2, 2)
+    plt.title("Restored Cross")
+    plt.imshow(restored_image, cmap='gray')
+    plt.axis('off')
+
+    plt.tight_layout()
+    plt.show()
 
     # Update D0 for entire image
     D0 = D0 * 11.5
