@@ -52,6 +52,16 @@ For comparision, here is a result using the Butterworth filter, whose approach i
 
 # Use The Project
 
+## File description
+
+- `main.py`: Calling the restoration procedure from `restore.py`.
+- `lowpass.py`: Compare the difference when applying ideal, Gaussian and Butterworth lowpass filter.
+- `restore.py`: A detail restoration procedure.
+- `ultis.py`: Includes some side functions, such as the Gaussian, Butterworth lowpass filters, ...
+- `fourier.py`: Visualize the Fourier spectrum images.
+
+## Run & Installation
+
 Feel free to use the code, here are the instructions:
 
 Clone the repository

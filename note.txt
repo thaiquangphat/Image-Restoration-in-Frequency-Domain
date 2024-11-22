@@ -1,0 +1,9 @@
+N: nhiễu gốc
+N/F: nhiễu mới
+
+G = H * F + N
+
+G / F = H + N / F
+
+F, G, G / F
+f, g, 
