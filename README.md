@@ -18,9 +18,9 @@ The heart image is given as follow:
 
 ### Assumptions
 
-Upon solving this problem, we consider the following assumptions:
-- <b>No knowledge of the original heart image:</b> We do not have the detailed heart image, thus at the restored result, we accept to our understanding.
-- <b>Gaussian or Butterworth:</b> We assume the blurred image is filtered using either Gaussian or Butterworth lowpass filters, other methods are not considered.
+Upon solving this problem, we consider the following assumption:
+- <b>No knowledge of the original heart image:</b> We will recover the degraded image as to verify the correctness of the degraded function, with not having the original heart image, thus at the restored result, we accept the result to our understanding.
+
 
 ## Approach
 
@@ -28,26 +28,23 @@ A detailed explanation of our approach is given in the <a href="https://github.c
 presentation file</a>. This document contains a step-by-step instruction of how to obtain resulted images.
 
 ## Experimental Results
+Our result shows that the resulting degraded function is estimated to be the Gaussian filter function. 
 
-### Gaussian Estimator
+First of all, we successfully recover the crosshair image to the best.
 
-As the document present, here is the result obtained using the Gaussian filter.
 <div align="center">
-  <a href="https://github.com/thaiquangphat/Image-Restoration-in-Frequency-Domain/blob/main/image/result_gaussian.png" target="_blank">
-    <img src="image/result_gaussian.png" alt="Description" width="450"/>
+  <a href="https://github.com/thaiquangphat/Image-Restoration-in-Frequency-Domain/blob/main/image/restore_crosshair.jpg" target="_blank">
+    <img src="image/restore_crosshair.jpg" alt="Description" width="450"/>
   </a>
-  <p><em>Gaussian lowpass estimated results</em></p>
+  <p><em>Restored Crosshair and it Comparisons</em></p>
 </div>
 
-
-### Butterworth Estimator
-
-For comparision, here is a result using the Butterworth filter, whose approach is similar to one made with the Gaussian filter.
+As the document presented, here is the result obtained using the Gaussian filter.
 <div align="center">
-    <a href="https://github.com/thaiquangphat/Image-Restoration-in-Frequency-Domain/blob/main/image/result_butterworth.png" target="_blank">
-        <img src="image/result_butterworth.png" alt="Description" width="450"/>
-    </a>
-  <p><em>Butterworth lowpass estimated results</em></p>
+  <a href="https://github.com/thaiquangphat/Image-Restoration-in-Frequency-Domain/blob/main/image/result_comparison.png" target="_blank">
+    <img src="image/result_comparison.png" alt="Description" width="450"/>
+  </a>
+  <p><em>Gaussian lowpass estimated results</em></p>
 </div>
 
 # Use The Project
@@ -55,10 +52,11 @@ For comparision, here is a result using the Butterworth filter, whose approach i
 ## File description
 
 - `main.py`: Calling the restoration procedure from `restore.py`.
-- `lowpass.py`: Compare the difference when applying ideal, Gaussian and Butterworth lowpass filter.
 - `restore.py`: A detail restoration procedure.
-- `ultis.py`: Includes some side functions, such as the Gaussian, Butterworth lowpass filters, ...
+- `ultis.py`: Includes the Gaussian filter function.
 - `fourier.py`: Visualize the Fourier spectrum images.
+- `histogram.py`: Visualize the histogram of segmented images.
+- `crop.py`: Cropping out regions in four resulted images for comparison.
 
 ## Run & Installation
 
@@ -77,9 +75,12 @@ cd Image-Restoration-in-Frequency-Domain
 
 To directly test the project, run
 ```bash
-python main.py -i image/heart.jpg -m <mode> -s <save>
+python main.py
 ```
-Arguments:
-- `-i`: the image path.
-- `-m`: indicates the estimator, `mode = 1` for Gaussian estimator, and `mode = 2` for Butterworth filter.
-- `-s`: whether to save the result figue, default = `False`.
+
+You can also run the following files to obtain the result mentioned above
+```bash
+python fourier.py
+python crop.py
+python histogram.py
+```
