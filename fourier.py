@@ -28,10 +28,10 @@ def idealCrossHair(cropped_blurred_image, blurred_image):
 
     # Create the synthetic ideal crosshair for comparison
     ideal_crosshair = np.zeros_like(cropped_blurred_image, dtype=np.uint8)
-    ideal_width, ideal_length = 3, 33  # Crosshair dimensions 33 24
+    ideal_width, ideal_length = 3, 33  # Crosshair dimensions
     center_y, center_x = cropped_blurred_image.shape[0] // 2, cropped_blurred_image.shape[1] // 2
 
-    intensity = 240
+    intensity = 255
 
     # Create the horizontal line of the crosshair
     ideal_crosshair[center_y - ideal_width // 2: center_y + ideal_width // 2 + 1,
