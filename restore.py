@@ -3,6 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 from scipy.fft import fft2, ifft2, fftshift, ifftshift
 from ultis import gaussianKernel
+from collections import Counter
 
 # Coordinates regions
 regions = {
@@ -43,6 +44,77 @@ def idealCrossHair(blurred_image):
     
     return ideal_crosshair
 
+def middle_rectangle(image):
+    # Check if the input image is valid
+    if image is None or len(image.shape) != 2:
+        raise ValueError("Input must be a valid grayscale image.")
+
+    # Get the dimensions of the image
+    height, width = image.shape
+
+    # Create a copy of the image to avoid modifying the original
+    image_with_rectangle_row = image.copy()
+    image_with_rectangle_col = image.copy()
+
+    # Calculate the middle row and column
+    middle_row = height // 2
+    middle_col = width // 2
+
+    # Draw horizontal lines for the middle row
+    line_thickness = 1
+    cv2.line(image_with_rectangle_row, (0, middle_row - line_thickness), (width, middle_row - line_thickness), 1, 1)
+    cv2.line(image_with_rectangle_row, (0, middle_row + line_thickness), (width, middle_row + line_thickness), 1, 1)
+
+    # Draw vertical lines for the middle column
+    cv2.line(image_with_rectangle_col, (middle_col - line_thickness, 0), (middle_col - line_thickness, height), 1, 1)
+    cv2.line(image_with_rectangle_col, (middle_col + line_thickness, 0), (middle_col + line_thickness, height), 1, 1)
+
+    return image_with_rectangle_row, image_with_rectangle_col
+
+def plot_middle(image):
+    # Extract the middle row
+    middle_row = image[image.shape[0] // 2, :]
+    middle_col = image[:, image.shape[1] // 2]
+
+    middle_rec_row, middle_rec_col = middle_rectangle(image)
+
+    # First bar plot
+    plt.figure()
+    plt.suptitle("The image line and its Bar plot")
+
+    plt.subplot(2, 2, 1)
+    plt.title("Extracted Middle Row")
+    plt.imshow(middle_rec_row, cmap='gray')
+    plt.axis('off')
+
+    plt.subplot(2, 2, 2)
+    plt.bar(range(len(middle_row)), middle_row, color='blue')
+    plt.xlabel('Index')
+    plt.ylabel('Value')
+    plt.title('Bar Plot for Middle Row')
+
+    # Second bar plot
+    plt.subplot(2, 2, 3)
+    plt.title("Extracted Middle Column")
+    plt.imshow(middle_rec_col, cmap='gray')
+    plt.axis('off')
+
+    plt.subplot(2, 2, 4)
+    plt.bar(range(len(middle_col)), middle_col, color='blue')
+    plt.xlabel('Index')
+    plt.ylabel('Value')
+    plt.title('Bar Plot for Middle Column')
+
+    plt.tight_layout()
+    plt.savefig("image/bar_plot.png")
+    plt.show()
+
+    # Modify the list, only take the Gaussian like shape
+    middle_row = [value if 12 <= index <= 30 else 0 for index, value in enumerate(middle_row)]
+    middle_col = [value if 14 <= index <= 28 else 0 for index, value in enumerate(middle_col)]
+
+    return middle_row, middle_col
+
 def restoreWithGaussian(blurred_image):
     u, v = blurred_image.shape
 
@@ -66,25 +138,31 @@ def restoreWithGaussian(blurred_image):
     F_shift_abs2 = np.abs(F_ideal_shifted)**2
     H_uv = (F_blurred_shifted.astype(int) * F_ideal_shifted.conj().astype(int)) / (F_shift_abs2.astype(int) + K)
 
+    middle_row, middle_col = plot_middle(np.abs(H_uv))
+
     # Calculate estimated D0
     h_center, w_center = h//2, w//2
-    D0 = 0.0
-    for i in range(h):
-        for j in range(w):
-            dist = (i - h_center)**2 + (j - w_center)**2
-            Huv = 0.0
+    D0, counter = 0.0, 0
 
-            # Handle exception cases
-            Huv = 1.0001 if H_uv[i, j] <= 0 else H_uv[i, j]
-            huv = np.log(Huv)
-            t = 0 if -dist / (2*huv) <= 0 else -dist / (2*huv)
-            
-            d0 = np.sqrt(np.abs(t))
-
+    for j in range(w):
+        if middle_row[j] > 0:
+            dist = (j - w_center)**2
+            huv = np.log(middle_row[j])
+            d0 = np.sqrt(-dist / (2 * huv))
             D0 += d0
 
-    # Taking the mean
-    D0 = (D0 / (h * w))
+            counter += 1
+
+    for i in range(h):
+        if middle_col[i] > 0:
+            dist = (i - h_center)**2
+            huv = np.log(middle_col[i])
+            d0 = np.sqrt(-dist / (2 * huv))
+            D0 += d0    
+
+            counter += 1
+
+    D0 = D0 / (counter)
     print(f"Estimated D0: {D0}")
 
     # Define the estimate gaussian kernel
