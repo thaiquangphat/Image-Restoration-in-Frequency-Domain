@@ -49,7 +49,7 @@ if __name__ == "__main__":
     plt.axis('off')
 
     plt.subplot(2, 2, 4)
-    plt.title("Enhanced Restored Image")
+    plt.title("Sharpened Restored Image")
     plt.imshow(sharpen_cross, cmap='gray', vmin=0, vmax=255)
     plt.axis('off')
 

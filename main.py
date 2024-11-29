@@ -74,7 +74,7 @@ def main():
     plt.axis('off')
 
     plt.subplot(2, 2, 4)
-    plt.title("Enhanced Restored Image")
+    plt.title("Sharpened Restored Image")
     plt.imshow(enhanced_image, cmap='gray')
     plt.axis('off')
 

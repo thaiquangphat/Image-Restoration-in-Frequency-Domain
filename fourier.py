@@ -49,7 +49,7 @@ if __name__ == "__main__":
     ideal_crosshair = idealCrossHair(cropped_cross, blurred_image_input)
 
     h, w = cropped_cross.shape
-    lowpass = gaussianKernel(h, w, 2.407)
+    lowpass = gaussianKernel(h, w, 2.22767338548629)
 
     G_fft = fft2(cropped_cross)
     F_fft = fft2(ideal_crosshair)
