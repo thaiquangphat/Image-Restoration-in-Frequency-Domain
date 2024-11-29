@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 def brightenImage(image, intensity, threshold):
     # Brightening the image
     brightened = np.copy(image)
-    brightened[threshold > 5] += intensity
+    brightened[image > intensity] += intensity
 
     # Ensure pixel values do not exceed 255
     brightened = np.clip(brightened, 0, 255)
@@ -37,7 +37,7 @@ def main():
 
     # Post processing: brightening and sharpening image
     # Brightening
-    brighten_image = brightenImage(restored_image, 30, 5)
+    brighten_image = brightenImage(restored_image, 20, 5)
 
     # Sharpening
     kernel = np.array([
