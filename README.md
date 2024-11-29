@@ -24,7 +24,7 @@ Upon solving this problem, we consider the following assumption:
 
 ## Approach
 
-A detailed explanation of our approach is given in the <a href="https://github.com/thaiquangphat/Image-Restoration-in-Frequency-Domain/blob/main/presentation.pdf" target="_blank">
+A detailed explanation of our approach is given in the <a href="https://github.com/thaiquangphat/Image-Restoration-in-Frequency-Domain/blob/main/doc/presentation.pdf" target="_blank">
 presentation file</a>. This document contains a step-by-step instruction of how to obtain resulted images.
 
 ## Experimental Results
